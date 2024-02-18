@@ -38,7 +38,7 @@ class DataFold:
                                 name="this is the fold name")
 
     	Args:
-    		parent_datamanager (DataManager): The parent datamanager.
+            parent_datamanager (DataManager): The parent datamanager.
             name (str): The name of the fold.
             training_dataset (Dataset): The training dataset.
             validation_dataset (Dataset): The validation dataset.
