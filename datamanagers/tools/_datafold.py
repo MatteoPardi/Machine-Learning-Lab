@@ -4,6 +4,7 @@ class DataFold:
 
     Attributes:
         parent_datamanager (DataManager): The parent datamanager.
+        name (str): The name of the fold.
         training_dataset (Dataset): The training dataset.
         validation_dataset (Dataset): The validation dataset.
         test_dataset (Dataset): The test dataset.
@@ -18,6 +19,7 @@ class DataFold:
 
     def __init__ (self, 
                   parent_datamanager=None, 
+                  name=None,
                   training_dataset=None,
                   validation_dataset=None,
                   test_dataset=None,
@@ -37,6 +39,7 @@ class DataFold:
 
     	Args:
     		parent_datamanager (DataManager): The parent datamanager.
+            name (str): The name of the fold.
             training_dataset (Dataset): The training dataset.
             validation_dataset (Dataset): The validation dataset.
             test_dataset (Dataset): The test dataset.
@@ -49,6 +52,7 @@ class DataFold:
     	"""
 
         self.parent_datamanager = parent_datamanager
+        self.name = name
         self.training_dataset = training_dataset
         self.validation_dataset = validation_dataset
         self.test_dataset = test_dataset

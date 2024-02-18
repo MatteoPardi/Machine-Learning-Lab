@@ -7,6 +7,7 @@ class DataManager:
 
     Attributes:
         folds (list of DataFold): List to store data folds.
+        name (str): The name of the datamanager.
         **Additional custom attributes, corresponding to each setting.
 
     Methods:
@@ -24,8 +25,11 @@ class DataManager:
             NotImplementedError: This method must be implemented by subclasses.
         """
 
-        # In subclasses, the construction of self.folds must be implemented here
+        # In subclasses, here:
+        #   - the construction of self.folds must be implemented
+        #   - self.name must be defined
 
+        self.name = None
         self.folds = []
         raise NotImplementedError
 
@@ -45,9 +49,10 @@ class DataManager:
     def __repr__ (self):
     
         description = self.__class__.__name__ + "(\n"
-        description += f"  folds shape: {np.asarray(self.folds, dtype=object).shape}, \n"
+        description += f"  name: {self.name},\n"
+        description += f"  folds shape: {np.asarray(self.folds, dtype=object).shape},\n"
         for key, value in self.__dict__.items():
-            if key != "folds":
+            if key not in ["name", "folds"]:
                 description += f"  {key}: {str(value)},\n"
         description += ")"
         return description
