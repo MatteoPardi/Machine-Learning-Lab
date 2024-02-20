@@ -5,6 +5,7 @@ class DataFold:
     Attributes:
         parent_datamanager (DataManager): The parent datamanager.
         name (str): The name of the fold.
+        readme (str): The readme of the fold.
         training_dataset (Dataset): The training dataset.
         validation_dataset (Dataset): The validation dataset.
         test_dataset (Dataset): The test dataset.
@@ -20,6 +21,7 @@ class DataFold:
     def __init__ (self, 
                   parent_datamanager=None, 
                   name=None,
+                  readme=None,
                   training_dataset=None,
                   validation_dataset=None,
                   test_dataset=None,
@@ -40,6 +42,7 @@ class DataFold:
     	Args:
             parent_datamanager (DataManager): The parent datamanager.
             name (str): The name of the fold.
+            readme (str): The readme of the fold.
             training_dataset (Dataset): The training dataset.
             validation_dataset (Dataset): The validation dataset.
             test_dataset (Dataset): The test dataset.
@@ -53,6 +56,7 @@ class DataFold:
 
         self.parent_datamanager = parent_datamanager
         self.name = name
+        self.readme = readme
         self.training_dataset = training_dataset
         self.validation_dataset = validation_dataset
         self.test_dataset = test_dataset
@@ -67,6 +71,8 @@ class DataFold:
         for key, value in self.__dict__.items():
             description += f"  {key}: {str(value)},\n"
         description += ")"
+        if self.readme:
+            description += "\n\n" + 30*"*" + "README" + 30*"*" + "\n\n" + self.readme + "\n"
         return description
     
     def __str__ (self):

@@ -8,6 +8,7 @@ class DataManager:
     Attributes:
         folds (list of DataFold): List to store data folds.
         name (str): The name of the datamanager.
+        readme (str): The readme of the datamanager.
         **Additional custom attributes, corresponding to each setting.
 
     Methods:
@@ -28,8 +29,10 @@ class DataManager:
         # In subclasses, here:
         #   - the construction of self.folds must be implemented
         #   - self.name must be defined
+        #   - self.readme must be defined
 
-        self.name = None
+        self.name = ""
+        self.readme = ""
         self.folds = []
         raise NotImplementedError
 
@@ -55,6 +58,8 @@ class DataManager:
             if key not in ["name", "folds"]:
                 description += f"  {key}: {str(value)},\n"
         description += ")"
+        if self.readme:
+            description += "\n\n" + 30*"*" + "README" + 30*"*" + "\n\n" + self.readme + "\n"
         return description
 
     def __str__(self):
