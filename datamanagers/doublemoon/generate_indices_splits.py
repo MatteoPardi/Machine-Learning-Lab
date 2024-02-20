@@ -10,7 +10,7 @@ import numpy as np
 # -------- Version 1: 2024-02-18 (Nested k-fold CV: 5 outer folds, 5 inner folds) --------
 
 name = "doublemoon_indices_splits_v1.json"
-num_indices = 10 # = len(pd.read_csv("doublemoon_v1.csv"))
+num_indices = 1000 # = len(pd.read_csv("doublemoon_v1.csv"))
 rng = np.random.default_rng(42)
 num_outer_folds = 5
 num_inner_folds = 5
