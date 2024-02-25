@@ -1,7 +1,8 @@
 import os
 HERE = os.path.dirname(os.path.abspath(__file__))
+PATH_TILL_DATAMANAGERS_MODULE = HERE[:HERE.rfind("datamanagers")+len("datamanagers")]
 import sys
-sys.path.insert(1, HERE+"/..")
+sys.path.insert(1, PATH_TILL_DATAMANAGERS_MODULE)
 from tools.splitting_methods import kfold
 import json
 import numpy as np
@@ -25,5 +26,5 @@ for i_outer in range(num_outer_folds):
         indices_split[i_outer][i_inner]['validation'] = validation_indices[i_inner].tolist()
         indices_split[i_outer][i_inner]['test'] = test_indices[i_outer].tolist()
 
-with open(f"{HERE}/{name}", 'w') as file:
+with open(f"{HERE}/../{name}", 'w') as file:
     json.dump(indices_split, file)

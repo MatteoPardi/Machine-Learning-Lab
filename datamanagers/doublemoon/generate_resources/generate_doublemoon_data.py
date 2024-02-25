@@ -1,8 +1,11 @@
+import os
+HERE = os.path.dirname(os.path.abspath(__file__))
+PATH_TILL_DATAMANAGERS_MODULE = HERE[:HERE.rfind("datamanagers")+len("datamanagers")]
+import sys
+sys.path.insert(1, PATH_TILL_DATAMANAGERS_MODULE)
 import numpy as np
 from numpy import pi, sqrt, cos, sin, concatenate
 import pandas as pd
-import os
-HERE = os.path.dirname(os.path.abspath(__file__))
 
 
 # ************************************************************************************************
@@ -158,4 +161,4 @@ x, label = doublemoon_datasource.sample(num_samples, rng=rng)
 df = pd.DataFrame(x, columns=["x1", "x2"])
 df["label"] = label
 df.index.name = "id"
-df.to_csv(f"{HERE}/doublemoon_v1.csv", index=True)
+df.to_csv(f"{HERE}/../doublemoon_data_v1.csv", index=True)
