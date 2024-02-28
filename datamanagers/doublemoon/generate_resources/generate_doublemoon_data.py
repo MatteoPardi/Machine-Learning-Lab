@@ -28,6 +28,7 @@ class DoubleMoon_DataSource:
         noise (float): Gaussian noise with std=noise is added to the data.
 
     Methods:
+        __init__(center_class0=np.array([-0.5, -0.2]), center_class1=np.array([0.5, 0.2]), width=0.4, noise=0.)
         sample(N, class0_size=0.5, rng=None)
     """
     
@@ -39,7 +40,7 @@ class DoubleMoon_DataSource:
         """
         Costructor for the class.
 
-        Usage example:
+        Usage examples:
             doublemoon_datasource = DoubleMoon_DataSource()
             doublemoon_datasource = DoubleMoon_DataSource(noise=noise)
 

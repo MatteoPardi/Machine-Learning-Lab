@@ -5,6 +5,11 @@ class DataManager:
     """
     DataManager class for managing data folds.
 
+    Usage example:
+        datamanager = DataManager(**kargs)
+        datamanager.change_settings(**kargs)
+        datamanager.folds[idx]
+
     Attributes:
         folds (list of DataFold): List to store data folds.
         name (str): The name of the datamanager.
@@ -12,7 +17,8 @@ class DataManager:
         **Additional custom attributes, corresponding to each setting.
 
     Methods:
-        change_settings(**kargs): Abstract method to change some datamanager setting.
+        __init__(**kargs)
+        change_settings(**kargs)
     """
 
     def __init__(self, **kargs):

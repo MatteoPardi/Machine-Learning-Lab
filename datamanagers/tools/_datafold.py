@@ -2,6 +2,11 @@ class DataFold:
     """
     DataFold represents a fold of data within a DataManager, containing training, validation, and test sets along with associated dataloaders.
 
+    Usage example:
+        datafold = DataFold(parent_datamanager, name, readme, training_dataset, validation_dataset, 
+                            test_dataset, training_dataloader, validation_dataloader, test_dataloader, 
+                            **kargs)
+
     Attributes:
         parent_datamanager (DataManager): The parent datamanager.
         name (str): The name of the fold.
@@ -15,7 +20,8 @@ class DataFold:
         **Additional custom attributes
 
     Methods:
-        None
+        __init__(parent_datamanager, name, readme, training_dataset, validation_dataset, test_dataset,
+                 training_dataloader, validation_dataloader, test_dataloader, **kargs)
     """
 
     def __init__ (self, 
