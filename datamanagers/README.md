@@ -1,3 +1,0 @@
-# Datamanagers
-
-To-do...
