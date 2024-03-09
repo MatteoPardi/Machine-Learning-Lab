@@ -70,7 +70,7 @@ class DoubleMoon_DataSource:
             x, label = doublemoon_datasource.sample(num_samples, rng=rng)
         
         Args:
-            um_samples (int): Number of data points.
+            num_samples (int): Number of data points.
             class0_size (float, optional): The percentage of samples to be allocated to class 0. Defaults is 0.5.
             rng (np.random._generator.Generator): Random number generator. Default is None, i.e., a new generator
                 with random seed is created.
@@ -91,55 +91,24 @@ class DoubleMoon_DataSource:
         return x, label
         
     def _class0_sample (self, num_samples, rng=None):
-        """
-        Generates samples for class 0.
-
-        Usage examples:
-            x, label = doublemoon_datasource._class0_sample(num_samples, rng=rng)
-
-        Parameters:
-            num_samples (int): Number of samples for class 0 to generate.
-            rng (np.random._generator.Generator): Random number generator. Default is None, i.e., a new generator
-                with random seed is created.
-
-        Returns:
-            x (array of float): The generated samples. x.shape = (num_samples, 2), where x[:,0] are the x-coordinates
-                and x[:,1] are the y-coordinates on the cartesian plane.
-            label (array of int): The labels. label = np.zeros((num_samples, 1)).
-        """
 
         if rng is None: rng = np.random.default_rng(None)
         angle = pi*rng.random(num_samples)
         r = sqrt(self._inner_radius_squared + rng.random(num_samples)*(self._outer_radius_squared - self._inner_radius_squared))
-        x_1 = (self.center_class0[0] + r*cos(angle) + self.noise*rng.normal(num_samples)).reshape(-1, 1)
-        x_2 = (self.center_class0[1] + r*sin(angle) + self.noise*rng.normal(num_samples)).reshape(-1, 1)
+        x_1 = (self.center_class0[0] + r*cos(angle) + self.noise*rng.normal(size=num_samples)).reshape(-1, 1)
+        x_2 = (self.center_class0[1] + r*sin(angle) + self.noise*rng.normal(size=num_samples)).reshape(-1, 1)
         x = concatenate((x_1, x_2), axis=1)
         label = np.zeros((num_samples, 1), dtype=int)
+
         return x, label
     
     def _class1_sample (self, num_samples, rng=None):
-        """
-        Generates samples for class 1.
-
-        Usage examples:
-            x, label = doublemoon_datasource._class1_sample(num_samples, rng=rng)
-
-        Parameters:
-            num_samples (int): Number of samples for class 1 to generate.
-            rng (np.random._generator.Generator): Random number generator. Default is None, i.e., a new generator
-                with random seed is created.
-
-        Returns:
-            x (array of float): The generated samples. x.shape = (num_samples, 2), where x[:,0] are the x-coordinates
-                and x[:,1] are the y-coordinates on the cartesian plane.
-            label (array of int): The labels. label = np.ones((num_samples, 1)).
-        """
 
         if rng is None: rng = np.random.default_rng(None)
         angle = pi*rng.random(num_samples)
         r = sqrt(self._inner_radius_squared + rng.random(num_samples)*(self._outer_radius_squared - self._inner_radius_squared))
-        x_1 = (self.center_class1[0] + r*cos(angle) + self.noise*rng.normal(num_samples)).reshape(-1, 1)
-        x_2 = (self.center_class1[1] - r*sin(angle) + self.noise*rng.normal(num_samples)).reshape(-1, 1)
+        x_1 = (self.center_class1[0] + r*cos(angle) + self.noise*rng.normal(size=num_samples)).reshape(-1, 1)
+        x_2 = (self.center_class1[1] - r*sin(angle) + self.noise*rng.normal(size=num_samples)).reshape(-1, 1)
         x = concatenate((x_1, x_2), axis=1)
         label = np.ones((num_samples, 1), dtype=int)
         return x, label
@@ -151,6 +120,7 @@ class DoubleMoon_DataSource:
 
 # -------- Version 1: 2024-02-18 (num_samples = 1000, noise = 0) --------
 
+name = "doublemoonData_v1.csv"
 num_samples = 1000
 noise = 0
 rng = np.random.default_rng(42)
@@ -160,4 +130,19 @@ x, label = doublemoon_datasource.sample(num_samples, rng=rng)
 df = pd.DataFrame(x, columns=["x1", "x2"])
 df["label"] = label
 df.index.name = "id"
-df.to_csv(f"{THIS_FOLDER_PATH}/../doublemoon_data_v1.csv", index=True)
+df.to_csv(f"{THIS_FOLDER_PATH}/../{name}", index=True)
+
+
+# -------- Version 2: 2024-03-09 (num_samples = 1000, noise = 0.16) --------
+
+name = "doublemoonData_v2.csv"
+num_samples = 1000
+noise = 0.16
+rng = np.random.default_rng(42)
+
+doublemoon_datasource = DoubleMoon_DataSource(noise=noise)
+x, label = doublemoon_datasource.sample(num_samples, rng=rng)
+df = pd.DataFrame(x, columns=["x1", "x2"])
+df["label"] = label
+df.index.name = "id"
+df.to_csv(f"{THIS_FOLDER_PATH}/../{name}", index=True)

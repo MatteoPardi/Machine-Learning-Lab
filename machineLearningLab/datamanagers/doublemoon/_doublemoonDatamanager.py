@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 import torch as th
 from datamanagers.utils import DataManager, DataFold
-from datamanagers.utils.torch_tensors_data import TorchTensorsDataset, TorchTensorsDataLoader
+from datamanagers.utils.torchTensorsData import TorchTensorsDataset, TorchTensorsDataLoader
 
 
 class DoubleMoon (DataManager):
@@ -17,14 +17,14 @@ class DoubleMoon (DataManager):
     DoubleMoon datamanager.
 
     Usage example:
-        doublemoon = DoubleMoon(batch_size=64, training_dataloader_method="shuffle", device="cpu", version="v1")
+        doublemoon = DoubleMoon(batchSize=64, trainingDataLoaderMethod="shuffle", device="cpu", version="v1")
         fold = doublemoon.folds[i_outer, i_inner]
         fold.training_dataset
         fold.validation_dataloader
 
     Args:
-        batch_size (int): The minibatch size for dataloaders. Default is 64.
-        training_dataloader_method (string): The method to use for training dataloaders.
+        batchSize (int): The minibatch size for dataloaders. Default is 64.
+        trainingDataLoaderMethod (string): The method to use for training dataloaders.
             Default is "shuffle".
         device (string): The device to use. Default is "cpu".
         version (string): The version of the datamanager. Default is "v1".
@@ -35,14 +35,14 @@ class DoubleMoon (DataManager):
         full_dataloader (TorchTensorsDataLoader): The dataloader associated to full_dataset.
 
     Methods:
-        __init__(batch_size=64, training_dataloader_method="shuffle", device="cpu", version="v1")
-        change_settings(**kargs)
+        __init__(batchSize=64, trainingDataLoaderMethod="shuffle", device="cpu", version="v1")
+        changeSettings(**kargs)
     """
 
     def __init__ (
             self, 
-            batch_size=64,
-            training_dataloader_method="shuffle",
+            batchSize=64,
+            trainingDataLoaderMethod="shuffle",
             device="cpu",
             version="v1",
         ):
@@ -51,11 +51,11 @@ class DoubleMoon (DataManager):
 
         Usage examples:
             doublemoon = DoubleMoon()
-            doublemoon = DoubleMoon(batch_size=64, training_dataloader_method="shuffle", device="cpu", version="v1")
+            doublemoon = DoubleMoon(batchSize=64, trainingDataLoaderMethod="shuffle", device="cpu", version="v1")
 
         Args:
-            batch_size (int, optional): The minibatch size for dataloaders. Default is 64.
-            training_dataloader_method (string, optional): The method to use for training dataloaders.
+            batchSize (int, optional): The minibatch size for dataloaders. Default is 64.
+            trainingDataLoaderMethod (string, optional): The method to use for training dataloaders.
                 Default is "shuffle".
             device (string, optional): The device to use. Default is "cpu".
             version (string, optional): The version of the datamanager. Default is "v1".
@@ -63,8 +63,8 @@ class DoubleMoon (DataManager):
 
         # Set input arguments, name and readme
 
-        self.batch_size = batch_size
-        self.training_dataloader_method = training_dataloader_method
+        self.batchSize = batchSize
+        self.trainingDataLoaderMethod = trainingDataLoaderMethod
         self.device = device
         self.version = version
         self.name = f"DoubleMoon-{version}"
@@ -76,9 +76,9 @@ class DoubleMoon (DataManager):
         
         # Load data, indices_split
 
-        with open(f"{THIS_FOLDER_PATH}/doublemoon_indices_splits_{version}.json") as file:
+        with open(f"{THIS_FOLDER_PATH}/doublemoonIndicesSplits_{version}.json") as file:
             indices_split = json.load(file)
-        with open(f"{THIS_FOLDER_PATH}/doublemoon_data_{version}.csv") as file:
+        with open(f"{THIS_FOLDER_PATH}/doublemoonData_{version}.csv") as file:
             data = pd.read_csv(file)
         x = th.tensor(data.loc[:, ["x1", "x2"]].values, dtype=th.float, device=device)
         y = th.tensor(data.loc[:, "label"].values, dtype=th.long, device=device)
@@ -88,8 +88,8 @@ class DoubleMoon (DataManager):
         self.full_dataset = TorchTensorsDataset(x, y)
         self.full_dataloader = TorchTensorsDataLoader(
             self.full_dataset, 
-            method=self.training_dataloader_method,
-            batch_size=batch_size
+            method=self.trainingDataLoaderMethod,
+            batchSize=batchSize
         )
         
         # Create folds
@@ -118,66 +118,66 @@ class DoubleMoon (DataManager):
 
                 fold.training_dataloader = TorchTensorsDataLoader(
                     fold.training_dataset,
-                    method=self.training_dataloader_method,
-                    batch_size=batch_size
+                    method=self.trainingDataLoaderMethod,
+                    batchSize=batchSize
                 )
                 fold.validation_dataloader = TorchTensorsDataLoader(
                     fold.validation_dataset,
                     method=None,
-                    batch_size=batch_size
+                    batchSize=batchSize
                 )
                 fold.design_dataloader = TorchTensorsDataLoader(
                     fold.design_dataset,
-                    method=training_dataloader_method,
-                    batch_size=batch_size
+                    method=trainingDataLoaderMethod,
+                    batchSize=batchSize
                 )
                 fold.test_dataloader = TorchTensorsDataLoader(
                     fold.test_dataset,
                     method=None,
-                    batch_size=batch_size
+                    batchSize=batchSize
                 )
 
                 # Add fold to self.folds
 
                 self.folds[i_outer, i_inner] = fold  
 
-    def change_settings (self, **kargs):
+    def changeSettings (self, **kargs):
         """
         Method to change datamanager setting.
 
         Usage examples:
-            doublemoon.change_settings(batch_size=64, device="cuda")
-            doublemoon.change_settings(training_dataloader_method="boostrap")
+            doublemoon.changeSettings(batchSize=64, device="cuda")
+            doublemoon.changeSettings(trainingDataLoaderMethod="boostrap")
 
         Args:
             **kargs: keyword arguments to update the settings. Admited keys are:
-                - batch_size
-                - training_dataloader_method
+                - batchSize
+                - trainingDataLoaderMethod
                 - device
 
         Returns:
             None
         """
         
-        if "batch_size" in kargs:
+        if "batchSize" in kargs:
 
-            self.batch_size = kargs["batch_size"]
+            self.batchSize = kargs["batchSize"]
             for i_outer in range(self.folds.shape[0]):
                 for i_inner in range(self.folds.shape[1]):
                     fold = self.folds[i_outer, i_inner]
-                    fold.training_dataloader.batch_size = self.batch_size
-                    fold.validation_dataloader.batch_size = self.batch_size
-                    fold.design_dataloader.batch_size = self.batch_size
-                    fold.test_dataloader.batch_size = self.batch_size
+                    fold.training_dataloader.set_batchSize(self.batchSize)
+                    fold.validation_dataloader.set_batchSize(self.batchSize)
+                    fold.design_dataloader.set_batchSize(self.batchSize)
+                    fold.test_dataloader.set_batchSize(self.batchSize)
         
-        if "training_dataloader_method" in kargs:
+        if "trainingDataLoaderMethod" in kargs:
 
-            self.training_dataloader_method = kargs["training_dataloader_method"]
+            self.trainingDataLoaderMethod = kargs["trainingDataLoaderMethod"]
             for i_outer in range(self.folds.shape[0]):
                 for i_inner in range(self.folds.shape[1]):
                     fold = self.folds[i_outer, i_inner]
-                    fold.training_dataloader.method = self.training_dataloader_method
-                    fold.design_dataloader.method = self.training_dataloader_method
+                    fold.training_dataloader.method = self.trainingDataLoaderMethod
+                    fold.design_dataloader.method = self.trainingDataLoaderMethod
         
         if "device" in kargs:
 

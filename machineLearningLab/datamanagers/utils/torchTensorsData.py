@@ -127,37 +127,37 @@ class TorchTensorsDataLoader:
     Class for handling a data loader of torch tensors.
 
     Usage example:
-        dataloader = TorchTensorsDataLoader(dataset, method='shuffle', batch_size=batch_size)
+        dataloader = TorchTensorsDataLoader(dataset, method='shuffle', batchSize=batchSize)
         for x_batch, y_batch in dataloader:
             <...>
 
     Attributes:
         dataset (TorchTensorsDataset): The dataset to be used.
         method (str): The method to use. Must be in [None, 'shuffle', 'bootstrap'].
-        batch_size (int): The minibatch size.
-        drop_last (bool): If True, drop the last batch if it is not full.
+        batchSize (int): The minibatch size.
+        dropLast (bool): If True, drop the last batch if it is not full.
         n_batches (int): The number of batches.
-        effective_length (int): n_batches * batch_size.
+        effectiveLength (int): n_batches * batchSize.
 
     Methods:
-        __init__(torchTensorsDataset, method=None, batch_size=None, drop_last=True)
+        __init__(torchTensorsDataset, method=None, batchSize=None, dropLast=True)
         __len__()
         __getitem__(idx)
     """
 
-    def __init__(self, torchTensorsDataset, method=None, batch_size=None, drop_last=True):
+    def __init__(self, torchTensorsDataset, method=None, batchSize=None, dropLast=True):
         """
         Constructor for the class.
 
         Usage example:
-            dataloader = TorchTensorsDataLoader(dataset, method='shuffle', batch_size=batch_size)
+            dataloader = TorchTensorsDataLoader(dataset, method='shuffle', batchSize=batchSize)
 
         Args:
             torchTensorsDataset (TorchTensorsDataset): The dataset to be used.
             method (str, optional): The method to use. Must be in [None, 'shuffle', 'bootstrap'].
                 default is None.
-            batch_size (int, optional): The minibatch size. default is None, i.e., the dataset length.
-            drop_last (bool, optional): If True, drop the last batch if it is not full. default is True.
+            batchSize (int, optional): The minibatch size. default is None, i.e., the dataset length.
+            dropLast (bool, optional): If True, drop the last batch if it is not full. default is True.
         """
         
         self.dataset = torchTensorsDataset
@@ -166,16 +166,10 @@ class TorchTensorsDataLoader:
             raise Exception("method must be in [None, 'shuffle', 'bootstrap']")
         self.method = method
 
-        if not batch_size: batch_size = len(self.dataset)
-        self.batch_size = batch_size
+        self.dropLast = dropLast
 
-        self.drop_last = drop_last
-
-        n_batches, remainder = divmod(len(self.dataset), self.batch_size)
-        if not self.drop_last and remainder > 0: n_batches += 1  
-        self.n_batches = n_batches
-
-        self.effective_length = self.n_batches*self.batch_size
+        if not batchSize: batchSize = len(self.dataset)
+        self._set_batchSize_and_dropLast(batchSize, dropLast)
         
     def __len__(self):
         """
@@ -190,13 +184,13 @@ class TorchTensorsDataLoader:
         """
         
         if self.method == 'bootstrap':
-            idx = np.random.randint(0, len(self.dataset), size=self.effective_length).tolist()
-            self._dataset2UseThisEpoch = self.dataset.subset(idx)
+            idx = np.random.randint(0, len(self.dataset), size=self.effectiveLength).tolist()
+            self._datasetToUseThisEpoch = self.dataset.subset(idx)
         elif self.method == 'shuffle':
             idx = np.random.permutation(len(self.dataset)).tolist()
-            self._dataset2UseThisEpoch = self.dataset.subset(idx)
+            self._datasetToUseThisEpoch = self.dataset.subset(idx)
         else:
-            self._dataset2UseThisEpoch = self.dataset
+            self._datasetToUseThisEpoch = self.dataset
         self._i = 0
         return self
 
@@ -205,15 +199,56 @@ class TorchTensorsDataLoader:
         Return the next batch.
         """
         
-        if self._i >= self.effective_length: raise StopIteration
-        batch = self._dataset2UseThisEpoch[self._i:self._i+self.batch_size]
-        self._i += self.batch_size
-        return batch
+        if self._i >= self.effectiveLength: raise StopIteration
+        batch = self._datasetToUseThisEpoch[self._i:self._i+self.batchSize]
+        self._i += self.batchSize
+        return 
+    
+    def set_batchSize (self, batchSize):
+        """
+        Set the value of batchSize.
+
+        Usage example:
+            dataloader.set_batchSize(batchSize)
+
+        Args:
+            batchSize (int): The new batch size.
+
+        Returns:
+            None
+        """
+        
+        self._set_batchSize_and_dropLast(batchSize, self.dropLast)
+        
+    def set_dropLast (self, dropLast):
+        """
+        Set the value of dropLast.
+
+        Usage example:
+            dataloader.set_dropLast(dropLast)
+
+        Args:
+            dropLast (bool): The new value of dropLast.
+
+        Returns:
+            None
+        """
+
+        self._set_batchSize_and_dropLast(self.batchSize, dropLast)
+    
+    def _set_batchSize_and_dropLast (self, batchSize, dropLast):
+
+        self.dropLast = dropLast
+        self.batchSize = batchSize
+        n_batches, remainder = divmod(len(self.dataset), self.batchSize)
+        if not self.dropLast and remainder > 0: n_batches += 1  
+        self.n_batches = n_batches
+        self.effectiveLength = self.n_batches*self.batchSize
 
     def __repr__ (self):
         
-        description = f"TorchTensorsDataLoader(method={self.method}, batch_size={self.batch_size}, "
-        description += f"drop_last={self.drop_last}, n_batches={len(self)}, device={self.dataset.device})"
+        description = f"TorchTensorsDataLoader(method={self.method}, batchSize={self.batchSize}, "
+        description += f"dropLast={self.dropLast}, n_batches={len(self)}, device={self.dataset.device})"
         return description
     
     def __str__ (self):

@@ -1,1 +1,1 @@
-from ._doublemoon_datamanager import DoubleMoon
+from ._doublemoonDatamanager import DoubleMoon
