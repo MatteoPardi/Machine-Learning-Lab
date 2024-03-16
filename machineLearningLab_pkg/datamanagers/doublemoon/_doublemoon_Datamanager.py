@@ -1,15 +1,12 @@
 import os
 THIS_FOLDER_PATH = os.path.dirname(os.path.abspath(__file__))
-PATH_TILL_machineLearningLab = THIS_FOLDER_PATH[:THIS_FOLDER_PATH.rfind("machineLearningLab")+len("machineLearningLab")]
-import sys
-sys.path.insert(1, PATH_TILL_machineLearningLab)
 
 import json
 import pandas as pd
 import numpy as np
 import torch as th
-from datamanagers.utils import DataManager, DataFold
-from datamanagers.utils.torchTensorsData import TorchTensorsDataset, TorchTensorsDataLoader
+from machineLearningLab_pkg.datamanagers.utils import DataManager, DataFold
+from machineLearningLab_pkg.datamanagers.utils.torchTensorsData import TorchTensorsDataset, TorchTensorsDataLoader
 
 
 class DoubleMoon (DataManager):
@@ -62,7 +59,6 @@ class DoubleMoon (DataManager):
         """
 
         # Set input arguments, name and readme
-
         self.batchSize = batchSize
         self.trainingDataLoaderMethod = trainingDataLoaderMethod
         self.device = device
@@ -75,16 +71,14 @@ class DoubleMoon (DataManager):
                       "moon 0, and label[i]=1 indicates moon 1."
         
         # Load data, indices_split
-
-        with open(f"{THIS_FOLDER_PATH}/doublemoonIndicesSplits_{version}.json") as file:
+        with open(f"{THIS_FOLDER_PATH}/doublemoon_indicesSplits_{version}.json") as file:
             indices_split = json.load(file)
-        with open(f"{THIS_FOLDER_PATH}/doublemoonData_{version}.csv") as file:
+        with open(f"{THIS_FOLDER_PATH}/doublemoon_data_{version}.csv") as file:
             data = pd.read_csv(file)
         x = th.tensor(data.loc[:, ["x1", "x2"]].values, dtype=th.float, device=device)
         y = th.tensor(data.loc[:, "label"].values, dtype=th.long, device=device)
 
         # Create full_dataset and full_dataloader
-
         self.full_dataset = TorchTensorsDataset(x, y)
         self.full_dataloader = TorchTensorsDataLoader(
             self.full_dataset, 
@@ -93,7 +87,6 @@ class DoubleMoon (DataManager):
         )
         
         # Create folds
-
         folds_shape = np.asarray(indices_split, dtype=object).shape
         self.folds = np.empty(folds_shape, dtype=object)
         for i_outer in range(folds_shape[0]):
@@ -102,12 +95,10 @@ class DoubleMoon (DataManager):
                 fold = DataFold()
 
                 # Set parent_datamanager, name and readme
-
                 fold.parent_datamanager = self
                 fold.name = f"out{i_outer}in{i_inner}"
 
                 # Set datasets
-
                 indices = indices_split[i_outer][i_inner]
                 fold.training_dataset = self.full_dataset.subset(indices['training'])
                 fold.validation_dataset = self.full_dataset.subset(indices['validation'])
@@ -115,7 +106,6 @@ class DoubleMoon (DataManager):
                 fold.test_dataset = self.full_dataset.subset(indices['test'])
 
                 # Set dataloaders
-
                 fold.training_dataloader = TorchTensorsDataLoader(
                     fold.training_dataset,
                     method=self.trainingDataLoaderMethod,
@@ -138,7 +128,6 @@ class DoubleMoon (DataManager):
                 )
 
                 # Add fold to self.folds
-
                 self.folds[i_outer, i_inner] = fold  
 
     def changeSettings (self, **kargs):

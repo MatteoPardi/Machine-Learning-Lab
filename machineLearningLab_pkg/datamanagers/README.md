@@ -1,4 +1,4 @@
-# Datamanagers
+# datamanagers
 
 A DataManager manages datasets and dataloaders for a specific machine learning task. It acts as a central hub, storing and providing access to your data. It organizes data into folds, each comprising a training, validation, design, and test dataset. Each dataset is then linked to a corresponding dataloader.
 
@@ -43,6 +43,9 @@ class MyNew (DataManager):
 ```python
 # datamanagers/__init__.py
 
+from . import utils
+
+# Insert datamanagers here below
 from .doublemoon import DoubleMoon
 <...>
 from .mynew import MyNew # <<<<<<<<<<<<<<<<<<<<<<<<
