@@ -1,1 +1,2 @@
-from ._doublemoon_Datamanager import DoubleMoon
+from .doublemoon_Datamanager import DoubleMoon
+from . import generate_resources

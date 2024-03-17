@@ -1,12 +1,49 @@
 import os
 THIS_FOLDER_PATH = os.path.dirname(os.path.abspath(__file__))
-PATH_TILL_machineLearningLab_pkg = THIS_FOLDER_PATH[:THIS_FOLDER_PATH.rfind("machineLearningLab_pkg")]
-import sys
-sys.path.insert(1, PATH_TILL_machineLearningLab_pkg)
 
 import numpy as np
 from numpy import pi, sqrt, cos, sin, concatenate
 import pandas as pd
+
+def generate_doublemoon_data ():
+
+    # -------- Version 1: 2024-02-18 (num_samples = 1000, noise = 0) --------
+
+    name = "doublemoon_data_v1.csv"
+    num_samples = 1000
+    noise = 0
+    rng = np.random.default_rng(42)
+
+    print(f"Generating {name} ...", end="")
+
+    doublemoon_datasource = DoubleMoon_DataSource(noise=noise)
+    x, label = doublemoon_datasource.sample(num_samples, rng=rng)
+    df = pd.DataFrame(x, columns=["x1", "x2"])
+    df["label"] = label
+    df.index.name = "id"
+    filePath = f"{THIS_FOLDER_PATH}/../{name}"
+    df.to_csv(filePath, index=True)
+
+    print(f" done! Save at path:\n  {os.path.abspath(filePath)}")
+
+    # -------- Version 2: 2024-03-09 (num_samples = 1000, noise = 0.16) --------
+
+    name = "doublemoon_data_v2.csv"
+    num_samples = 1000
+    noise = 0.16
+    rng = np.random.default_rng(42)
+
+    print(f"Generating {name} ...", end="")
+
+    doublemoon_datasource = DoubleMoon_DataSource(noise=noise)
+    x, label = doublemoon_datasource.sample(num_samples, rng=rng)
+    df = pd.DataFrame(x, columns=["x1", "x2"])
+    df["label"] = label
+    df.index.name = "id"
+    filePath = f"{THIS_FOLDER_PATH}/../{name}"
+    df.to_csv(f"{THIS_FOLDER_PATH}/../{name}", index=True)
+
+    print(f" done! Save at path:\n  {os.path.abspath(filePath)}")
 
 
 # ************************************************************************************************
@@ -115,37 +152,3 @@ class DoubleMoon_DataSource:
         x = concatenate((x_1, x_2), axis=1)
         label = np.ones((num_samples, 1), dtype=int)
         return x, label
-    
-
-# ************************************************************************************************
-# Main
-# ************************************************************************************************
-
-# -------- Version 1: 2024-02-18 (num_samples = 1000, noise = 0) --------
-
-name = "doublemoon_data_v1.csv"
-num_samples = 1000
-noise = 0
-rng = np.random.default_rng(42)
-
-doublemoon_datasource = DoubleMoon_DataSource(noise=noise)
-x, label = doublemoon_datasource.sample(num_samples, rng=rng)
-df = pd.DataFrame(x, columns=["x1", "x2"])
-df["label"] = label
-df.index.name = "id"
-df.to_csv(f"{THIS_FOLDER_PATH}/../{name}", index=True)
-
-
-# -------- Version 2: 2024-03-09 (num_samples = 1000, noise = 0.16) --------
-
-name = "doublemoon_data_v2.csv"
-num_samples = 1000
-noise = 0.16
-rng = np.random.default_rng(42)
-
-doublemoon_datasource = DoubleMoon_DataSource(noise=noise)
-x, label = doublemoon_datasource.sample(num_samples, rng=rng)
-df = pd.DataFrame(x, columns=["x1", "x2"])
-df["label"] = label
-df.index.name = "id"
-df.to_csv(f"{THIS_FOLDER_PATH}/../{name}", index=True)

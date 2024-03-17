@@ -111,7 +111,7 @@ class TorchTensorsDataset:
         self.device = device
         self.x = self.x.to(device)
         self.y = self.y.to(device)
-        if self.indices: self.indices = self.indices.to(device)
+        if self.indices is not None: self.indices = self.indices.to(device)
  
     def __repr__ (self):
           
@@ -145,7 +145,7 @@ class TorchTensorsDataLoader:
         __getitem__(idx)
     """
 
-    def __init__(self, torchTensorsDataset, method=None, batchSize=None, dropLast=True):
+    def __init__ (self, torchTensorsDataset, method=None, batchSize=None, dropLast=False):
         """
         Constructor for the class.
 
@@ -157,7 +157,7 @@ class TorchTensorsDataLoader:
             method (str, optional): The method to use. Must be in [None, 'shuffle', 'bootstrap'].
                 default is None.
             batchSize (int, optional): The minibatch size. default is None, i.e., the dataset length.
-            dropLast (bool, optional): If True, drop the last batch if it is not full. default is True.
+            dropLast (bool, optional): If True, drop the last batch if it is not full. default is False.
         """
         
         self.dataset = torchTensorsDataset
@@ -171,14 +171,14 @@ class TorchTensorsDataLoader:
         if not batchSize: batchSize = len(self.dataset)
         self._set_batchSize_and_dropLast(batchSize, dropLast)
         
-    def __len__(self):
+    def __len__ (self):
         """
         Return the number of batches.
         """
         
         return self.n_batches
         
-    def __iter__(self):
+    def __iter__ (self):
         """
         Return the iterator.
         """
@@ -194,7 +194,7 @@ class TorchTensorsDataLoader:
         self._i = 0
         return self
 
-    def __next__(self):
+    def __next__ (self):
         """
         Return the next batch.
         """
@@ -202,7 +202,7 @@ class TorchTensorsDataLoader:
         if self._i >= self.effectiveLength: raise StopIteration
         batch = self._datasetToUseThisEpoch[self._i:self._i+self.batchSize]
         self._i += self.batchSize
-        return 
+        return batch
     
     def set_batchSize (self, batchSize):
         """

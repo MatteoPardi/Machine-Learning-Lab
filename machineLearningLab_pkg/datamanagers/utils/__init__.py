@@ -1,5 +1,5 @@
-from ._datafold import DataFold
-from ._datamanager import DataManager
+from .Datafold import DataFold
+from .Datamanager import DataManager
 
 # Insert utilities modules here below
 from . import splittingMethods

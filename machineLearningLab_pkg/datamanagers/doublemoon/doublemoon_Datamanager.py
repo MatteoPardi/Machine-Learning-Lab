@@ -7,6 +7,7 @@ import numpy as np
 import torch as th
 from machineLearningLab_pkg.datamanagers.utils import DataManager, DataFold
 from machineLearningLab_pkg.datamanagers.utils.torchTensorsData import TorchTensorsDataset, TorchTensorsDataLoader
+from machineLearningLab_pkg.datamanagers.doublemoon import generate_resources
 
 
 class DoubleMoon (DataManager):
@@ -69,12 +70,24 @@ class DoubleMoon (DataManager):
                       "intertwined moons. x[:,0] are the x-coordinates and x[:,1]\n" + \
                       "are the y-coordinates on the cartesian plane. label[i]=0 indicates\n" + \
                       "moon 0, and label[i]=1 indicates moon 1."
-        
-        # Load data, indices_split
-        with open(f"{THIS_FOLDER_PATH}/doublemoon_indicesSplits_{version}.json") as file:
-            indices_split = json.load(file)
-        with open(f"{THIS_FOLDER_PATH}/doublemoon_data_{version}.csv") as file:
-            data = pd.read_csv(file)
+
+        # Load indices_split
+        try:
+            with open(f"{THIS_FOLDER_PATH}/doublemoon_indicesSplits_{version}.json") as file:
+                indices_split = json.load(file)
+        except FileNotFoundError:
+            generate_resources.generate_doublemoon_indicesSplits()
+            with open(f"{THIS_FOLDER_PATH}/doublemoon_indicesSplits_{version}.json") as file:
+                indices_split = json.load(file)
+
+        # Load data
+        try:
+            with open(f"{THIS_FOLDER_PATH}/doublemoon_data_{version}.csv") as file:
+                data = pd.read_csv(file)
+        except FileNotFoundError:
+            generate_resources.generate_doublemoon_data()
+            with open(f"{THIS_FOLDER_PATH}/doublemoon_data_{version}.csv") as file:
+                data = pd.read_csv(file)
         x = th.tensor(data.loc[:, ["x1", "x2"]].values, dtype=th.float, device=device)
         y = th.tensor(data.loc[:, "label"].values, dtype=th.long, device=device)
 
@@ -145,7 +158,7 @@ class DoubleMoon (DataManager):
                 - device
 
         Returns:
-            None
+            self
         """
         
         if "batchSize" in kargs:
@@ -178,3 +191,22 @@ class DoubleMoon (DataManager):
                     fold.validation_dataset.to(self.device)
                     fold.design_dataset.to(self.device)
                     fold.test_dataset.to(self.device)
+
+        return self
+
+    def to (self, device):
+        """
+        Move the datamanager datasets to the given device. Equivalent to changeSettings(device=device)
+
+        Usage example:
+            doublemoon.to(device)
+        
+        Args:
+            device (torch.device): The device to move the datamanager datasets to.
+
+        Returns:
+            self
+        """
+
+        self.changeSettings(device=device)
+        return self

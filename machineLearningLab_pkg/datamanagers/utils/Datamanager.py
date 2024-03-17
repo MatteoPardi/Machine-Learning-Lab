@@ -54,6 +54,24 @@ class DataManager:
         """
         
         raise NotImplementedError
+    
+    def to (self, device):
+        """
+        Move the datamanager datasets to the given device. Equivalent to changeSettings(device=device)
+
+        Usage example:
+            self.to(device)
+        
+        Args:
+            device (torch.device): The device to move the datamanager datasets to.
+
+        Returns:
+            self
+        """
+
+        self.changeSettings(device=device)
+        return self
+
 
     def __repr__ (self):
     
