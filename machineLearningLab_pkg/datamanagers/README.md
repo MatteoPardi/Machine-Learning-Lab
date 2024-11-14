@@ -36,6 +36,9 @@ class MyNew (DataManager):
 
     def change_settings (self, **kargs):
 		<...>
+
+	def to (self, device):
+		<...>
 ```
 
 3. Add the new datamanager to `__init__.py`:
